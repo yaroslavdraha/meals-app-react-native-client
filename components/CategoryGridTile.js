@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   gridItem: {
     flex: 1,
     margin: 15,
-    height: 100
+    height: 150
   },
   container: {
     flex: 1,
