@@ -1,5 +1,5 @@
 import {MEALS} from "../../data/dummy-data";
-import {SET_FILTERS, TOGGLE_FAVORITE} from "../actions/meals";
+import {LOAD_FAVORITES, SET_FILTERS, TOGGLE_FAVORITE} from "../actions/meals";
 
 const initialState = {
   meals: MEALS,
@@ -9,19 +9,36 @@ const initialState = {
 
 const mealsReducer = (state = initialState, action) => {
   switch (action.type) {
-    case TOGGLE_FAVORITE:
+    case LOAD_FAVORITES: {
+      const favorites = state.meals.filter(meal => action.favorites.indexOf(meal.id) >= 0);
+      return {...state, favoriteMeals: favorites}
+    }
+
+    case TOGGLE_FAVORITE: {
       const existingIndex = state.favoriteMeals.findIndex(meal => meal.id === action.mealId);
+      let updatedFavoriteMeals = [...state.favoriteMeals];
 
       if (existingIndex >= 0) {
-        const updatedFavoriteMeals = [...state.favoriteMeals];
         updatedFavoriteMeals.splice(existingIndex, 1);
-        return { ...state, favoriteMeals: updatedFavoriteMeals}
       } else {
         const meal = state.meals.find(meal => meal.id === action.mealId);
-        return {...state, favoriteMeals: state.favoriteMeals.concat(meal)}
+        updatedFavoriteMeals = state.favoriteMeals.concat(meal);
+
+        fetch('https://meal-app-567fd.firebaseio.com/favoritemeals.json', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id: meal.id
+          })
+        }).then(r => console.log('added to favorites'));
       }
 
-    case SET_FILTERS:
+      return { ...state, favoriteMeals: updatedFavoriteMeals}
+    }
+
+    case SET_FILTERS: {
       const filters = action.filters;
       const filteredMeals = state.meals.filter(meal => {
         if (filters.glutenFree && !meal.isGlutenFree) {
@@ -44,6 +61,7 @@ const mealsReducer = (state = initialState, action) => {
       });
 
       return {...state, filteredMeals: filteredMeals};
+    }
 
     default:
       return state;

@@ -4,7 +4,7 @@ import {HeaderButton, HeaderButtons, Item} from "react-navigation-header-buttons
 import {useDispatch} from "react-redux";
 
 import Colors from "../constants/Colors";
-import {setFilter} from "../store/actions/meals";
+import {loadFavorites, setFilter} from "../store/actions/meals";
 
 const FilterSwitch = props => {
   return (

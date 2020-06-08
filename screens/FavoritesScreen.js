@@ -1,13 +1,19 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, View} from 'react-native';
 import MealList from "../components/MealList";
 
 import {HeaderButton, HeaderButtons, Item} from "react-navigation-header-buttons";
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import DefaultText from "../components/DefaultText";
+import {loadFavorites} from "../store/actions/meals";
 
 const FavoritesScreen = props => {
   const favoriteMeals = useSelector(state => state.meals.favoriteMeals);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(loadFavorites());
+  }, [dispatch])
 
   if (!favoriteMeals.length) {
     return (
