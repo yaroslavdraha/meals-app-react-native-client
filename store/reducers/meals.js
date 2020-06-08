@@ -1,5 +1,6 @@
 import {MEALS} from "../../data/dummy-data";
 import {LOAD_FAVORITES, SET_FILTERS, TOGGLE_FAVORITE} from "../actions/meals";
+import {toggleFavorites} from "../../shared/MealsService";
 
 const initialState = {
   meals: MEALS,
@@ -23,17 +24,9 @@ const mealsReducer = (state = initialState, action) => {
       } else {
         const meal = state.meals.find(meal => meal.id === action.mealId);
         updatedFavoriteMeals = state.favoriteMeals.concat(meal);
-
-        fetch('https://meal-app-567fd.firebaseio.com/favoritemeals.json', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            id: meal.id
-          })
-        }).then(r => console.log('added to favorites'));
       }
+
+      toggleFavorites(action.mealId).then(r => console.log('Favorite was toggled on server'));
 
       return { ...state, favoriteMeals: updatedFavoriteMeals}
     }
